@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 typedef struct CString
 {
@@ -18,12 +19,26 @@ CString* cstring_new(const char* str)
     i = 0;
     do
     {
-        *string->str = 'o';
         *(string->str + sizeof(char) * i) = *(str + sizeof(char) * i);
         i++;
     }
     while (i < string->len);
     return string;
+}
+
+char getChar(CString* str, int n)
+{
+    return *(str->str + n*sizeof(char));
+}
+
+void setChar(CString* str, int n, char ch)
+{
+    *(str->str + n*sizeof(char)) = ch;
+}
+
+const char* getString(CString* str)
+{
+    return *(str->str)
 }
 
 int main()
