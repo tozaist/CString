@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 
 typedef struct CString
 {
@@ -9,41 +10,72 @@ typedef struct CString
 
 CString* cstring_new(const char* str)
 {
-    int i = 0;
-    do 
-        i++;
-    while (*(str + sizeof(char) * i) != '\0');
-    CString* string = malloc(sizeof(char*) + sizeof(unsigned));
-    string->len = i;
-    string->str = (char*)malloc(sizeof(char) * (string->len + 1));
-    i = 0;
-    do
+    if (str != NULL)
     {
-        *(string->str + sizeof(char) * i) = *(str + sizeof(char) * i);
-        i++;
+        int i = 0;
+        do 
+            i++;
+        while (*(str + sizeof(char) * (i - 1)) != '\0');
+        CString* string = malloc(sizeof(char*) + sizeof(unsigned));
+        string->len = i;
+        string->str = (char*)malloc(sizeof(char) * (string->len + 1));
+        i = 0;
+        do
+        {
+            *(string->str + sizeof(char) * i) = *(str + sizeof(char) * i);
+            i++;
+        }
+        while (i < string->len);
+        return string;
     }
-    while (i < string->len);
-    return string;
+    return 0;
 }
 
-char getChar(CString* str, int n)
+char getChar(const CString* str, int n)
 {
-    return *(str->str + n*sizeof(char));
+    if (str != NULL && n >= 0 && n < str->len)
+        return *(str->str + n*sizeof(char));
+    return 0;
 }
 
-void setChar(CString* str, int n, char ch)
+int setChar(CString* str, int n, char ch)
 {
-    *(str->str + n*sizeof(char)) = ch;
+    if (str != NULL && n >= 0 && n < str->len)
+    {
+        *(str->str + n*sizeof(char)) = ch;
+        return ch;
+    }
+    return 0;
 }
 
-const char* getString(CString* str)
+char* getString(const CString* str)
 {
-    return *(str->str)
+    if (str != NULL)
+        return str->str;
+    return 0;
+}
+
+const int getLength(const CString* str)
+{
+    if (str != NULL)
+        return str->len;
+    return 0;
+}
+
+void test(CString* string)
+{
+    assert(string);
+    assert(getChar(string, 2) == *(string->str+2*sizeof(char)));
+    if (setChar(string, 2, 'r'))
+        assert(*(string->str+2*sizeof(char))=='r');
+    assert(getLength(string) == string->len);
 }
 
 int main()
 {
-    char* tmp = "test";
-    CString* string = cstring_new(tmp);
-    return string->len;
+    CString* str = cstring_new("test");
+    test(str);
+    str = cstring_new("");
+    test(str);
+    return 0;
 }
