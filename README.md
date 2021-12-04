@@ -1,8 +1,8 @@
 # CString
----
+
 Char wrapper for C.
 ## Building
----
+
 Only requires `gcc`.
 ```
 git clone https://github.com/tozaist/CString.git && cd ./CString
@@ -11,7 +11,7 @@ git clone https://github.com/tozaist/CString.git && cd ./CString
 make
 ```
 ## Usage examples
----
+
 Create new string:
 
 ```
