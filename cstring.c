@@ -34,7 +34,7 @@ CString* cstring_new(const char* str)
 char getChar(const CString* str, int n)
 {
     if (str != NULL && n >= 0 && n < str->len)
-        return *(str->str + n*sizeof(char));
+        return *(str->str + (n-1)*sizeof(char));
     return 0;
 }
 
@@ -42,7 +42,7 @@ int setChar(CString* str, int n, char ch)
 {
     if (str != NULL && n >= 0 && n < str->len)
     {
-        *(str->str + n*sizeof(char)) = ch;
+        *(str->str + (n-1)*sizeof(char)) = ch;
         return ch;
     }
     return 0;
@@ -65,9 +65,10 @@ const int getLength(const CString* str)
 void test(CString* string)
 {
     assert(string);
-    assert(getChar(string, 2) == *(string->str+2*sizeof(char)));
+    if (string->len >= 2)
+        assert(getChar(string, 2) == *(string->str+(2-1)*sizeof(char)));
     if (setChar(string, 2, 'r'))
-        assert(*(string->str+2*sizeof(char))=='r');
+        assert(*(string->str+(2-1)*sizeof(char))=='r');
     assert(getLength(string) == string->len);
 }
 
