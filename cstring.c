@@ -12,10 +12,10 @@ CString* cstring_new(const char* str)
 {
     if (str != NULL)
     {
-        int i = 0;
+        int i = -1;
         do 
             i++;
-        while (*(str + sizeof(char) * (i - 1)) != '\0');
+        while (*(str + sizeof(char) * i) != '\0');
         CString* string = malloc(sizeof(char*) + sizeof(unsigned));
         string->len = i;
         string->str = (char*)malloc(sizeof(char) * (string->len + 1));
@@ -33,14 +33,14 @@ CString* cstring_new(const char* str)
 
 char getChar(const CString* str, int n)
 {
-    if (str != NULL && n >= 0 && n < str->len)
+    if (str != NULL && n >= 0 && n <= str->len)
         return *(str->str + (n-1)*sizeof(char));
     return 0;
 }
 
 int setChar(CString* str, int n, char ch)
 {
-    if (str != NULL && n >= 0 && n < str->len)
+    if (str != NULL && n >= 0 && n <= str->len)
     {
         *(str->str + (n-1)*sizeof(char)) = ch;
         return ch;
