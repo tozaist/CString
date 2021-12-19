@@ -1,54 +1,60 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <assert.h>
 
 typedef struct CString
 {
+    size_t len;
     char* str;
-    unsigned len;
 } CString;
 
 CString* cstring_new(const char* str)
 {
-    if (str != NULL)
+    CString* string = NULL;
+
+    if (str == NULL)
     {
-        int i = -1;
-        do 
-            i++;
-        while (*(str + sizeof(char) * i) != '\0');
-        CString* string = malloc(sizeof(char*) + sizeof(unsigned));
-        string->len = i;
-        string->str = (char*)malloc(sizeof(char) * (string->len + 1));
-        i = 0;
-        do
-        {
-            *(string->str + sizeof(char) * i) = *(str + sizeof(char) * i);
-            i++;
-        }
-        while (i < string->len);
-        return string;
+        goto error;
     }
-    return 0;
-}
 
-char getChar(const CString* str, int n)
-{
-    if (str != NULL && n >= 0 && n <= str->len)
-        return *(str->str + (n-1)*sizeof(char));
-    return 0;
-}
-
-int setChar(CString* str, int n, char ch)
-{
-    if (str != NULL && n >= 0 && n <= str->len)
+    if (NULL == (string = malloc(sizeof(size_t) + sizeof(char*))))
     {
-        *(str->str + (n-1)*sizeof(char)) = ch;
+        goto error;
+    }
+
+    string->len = strlen(str);
+    if (NULL == (string->str = malloc(string->len * sizeof(char))))
+    {
+        goto error;
+    }
+    string->str = memcpy(string->str, str, string->len);
+
+    return string;
+
+    error:
+        free(string);
+        return NULL;
+}
+
+char getChar(const CString* str, unsigned n)
+{
+    if (str != NULL && n <= str->len)
+        return str->str[n-1];
+    return 0;
+}
+
+int setChar(CString* str, unsigned n, char ch)
+{
+    if (str != NULL && n <= str->len)
+    {
+        str->str[n-1] = ch;
         return ch;
     }
     return 0;
 }
 
-char* getString(const CString* str)
+const char* getString(const CString* str)
 {
     if (str != NULL)
         return str->str;
@@ -75,8 +81,15 @@ void test(CString* string)
 int main()
 {
     CString* str = cstring_new("test");
+
     test(str);
+    free(str->str);
+    free(str);
+
     str = cstring_new("");
     test(str);
+    free(str->str);
+    free(str);
+    
     return 0;
 }
